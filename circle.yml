@@ -1,0 +1,20 @@
+dependencies:
+  cache_directories:
+    - ~/.m2
+    - ~/.gradle
+  pre:
+    - echo y | android update sdk --no-ui --all --filter "android-25"
+    - echo y | android update sdk --no-ui --all --filter "build-tools-25.0.0"
+    - echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"
+    - echo y | android update sdk --no-ui --all --filter "extra-android-support"
+    - echo y | android update sdk --no-ui --all --filter "tools"
+    - echo "org.gradle.daemon=true" >> gradle.properties
+test:
+  override:
+    - ./gradlew clean assemble test -PdisablePreDex
+  post:
+    - mkdir -p $CIRCLE_ARTIFACTS/apks/
+    - mkdir -p $CIRCLE_ARTIFACTS/mapping/
+    - cp app/build/outputs/apk/*.apk $CIRCLE_ARTIFACTS/apks/
+    - cp app/build/outputs/mapping/release/*.* $CIRCLE_ARTIFACTS/mapping/
+
