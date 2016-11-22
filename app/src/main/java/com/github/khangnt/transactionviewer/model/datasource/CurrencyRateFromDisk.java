@@ -2,6 +2,7 @@ package com.github.khangnt.transactionviewer.model.datasource;
 
 import android.content.ContentResolver;
 import android.net.Uri;
+import android.support.annotation.WorkerThread;
 import android.util.JsonReader;
 import android.util.Log;
 
@@ -16,6 +17,10 @@ import java.util.List;
 /**
  * Created by Khang NT on 11/22/16.
  * Email: khang.neon.1997@gmail.com
+ * <br><br>
+ *
+ * An implementation of {@link IDataSource} to fetch json data in local file
+ * and parse it into List of {@link CurrencyRate}.
  */
 public class CurrencyRateFromDisk implements IDataSource<List<CurrencyRate>> {
     private static final String TAG = "CurrencyRateFromDisk";
@@ -32,6 +37,7 @@ public class CurrencyRateFromDisk implements IDataSource<List<CurrencyRate>> {
         this.sourceUri = sourceUri;
     }
 
+    @WorkerThread
     @Override
     public List<CurrencyRate> fetch() throws Exception {
         InputStream inputStream = Preconditions.checkNotNull(contentResolver.openInputStream(sourceUri));

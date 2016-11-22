@@ -2,6 +2,7 @@ package com.github.khangnt.transactionviewer.model.datasource;
 
 import android.content.ContentResolver;
 import android.net.Uri;
+import android.support.annotation.WorkerThread;
 import android.util.JsonReader;
 import android.util.Log;
 
@@ -16,6 +17,10 @@ import java.util.List;
 /**
  * Created by Khang NT on 11/22/16.
  * Email: khang.neon.1997@gmail.com
+ * <br><BR>
+ *
+ * An implementation of {@link IDataSource} to fetch json data in local file
+ * and parse it into List of {@link Transaction}.
  */
 public class TransactionFromDisk implements IDataSource<List<Transaction>> {
     private static final String TAG = "TransactionFromDisk";
@@ -31,6 +36,7 @@ public class TransactionFromDisk implements IDataSource<List<Transaction>> {
         this.sourceUri = sourceUri;
     }
 
+    @WorkerThread
     @Override
     public List<Transaction> fetch() throws Exception {
         InputStream inputStream = Preconditions.checkNotNull(contentResolver.openInputStream(sourceUri));
