@@ -1,6 +1,7 @@
 package com.github.khangnt.transactionviewer.model;
 
 import android.os.Handler;
+import android.support.annotation.Nullable;
 
 import com.github.khangnt.transactionviewer.callbacks.ICallback;
 import com.github.khangnt.transactionviewer.model.datasource.IDataSource;
@@ -43,10 +44,11 @@ public class CurrencyRateProcessor {
     /**
      * Run on given {@link Executor} to calculate the rate of <b>all currency with GBP</b>.
      *
-     * @param handler  is used to trigger the callback.
+     * @param handler  The handler use to dispatch the callback data, nullable. If null,
+     *                 trigger callback on thread the executor provided.
      * @param callback The callback.
      */
-    public void process(final Handler handler, final ICallback<Map<String, Float>> callback) {
+    public void process(@Nullable final Handler handler, final ICallback<Map<String, Float>> callback) {
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -83,20 +85,28 @@ public class CurrencyRateProcessor {
                             throw new Exception("Invalid rate data set: can't not calculate the rate of "
                                     + rateDataSet.get(0).getFrom() + " with " + GBP);
                     }
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onComplete(currencyRateWithGBP);
-                        }
-                    });
+                    if (handler != null) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onComplete(currencyRateWithGBP);
+                            }
+                        });
+                    } else {
+                        callback.onComplete(currencyRateWithGBP);
+                    }
                 } catch (final Exception e) {
                     e.printStackTrace();
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onError(e);
-                        }
-                    });
+                    if (handler != null) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onError(e);
+                            }
+                        });
+                    } else {
+                        callback.onError(e);
+                    }
                 }
             }
         });

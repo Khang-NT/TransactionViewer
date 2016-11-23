@@ -31,6 +31,10 @@ public class CurrencyRate {
         return new Builder();
     }
 
+    public static CurrencyRate of(String from, String to, float rate) {
+        return builder().from(from).to(to).rate(rate).build();
+    }
+
     public static class Builder {
         private CurrencyRate currencyRate = new CurrencyRate();
 

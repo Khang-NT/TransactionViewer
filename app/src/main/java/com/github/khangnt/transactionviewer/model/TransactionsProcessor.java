@@ -6,6 +6,7 @@ package com.github.khangnt.transactionviewer.model;
  */
 
 import android.os.Handler;
+import android.support.annotation.Nullable;
 
 import com.github.khangnt.transactionviewer.callbacks.ICallback;
 import com.github.khangnt.transactionviewer.model.datasource.IDataSource;
@@ -17,7 +18,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 /**
- * This class fetch list transaction from data source and merge all transactions have same SKU to one group.
+ * This class fetch transaction list from data source and merge all transactions have same SKU to one group.
  */
 public class TransactionsProcessor {
     private static final String TAG = "TransactionsProcessor";
@@ -30,7 +31,14 @@ public class TransactionsProcessor {
         this.transactionsDataSource = transactionsDataSource;
     }
 
-    public void process(final Handler handler, final ICallback<Map<String, List<Transaction>>> callback) {
+    /**
+     * Fetch transaction list from data source and merge all transactions have same SKU to one group.
+     *
+     * @param handler  Nullable, the handler use to dispatch the callback data. If null,
+     *                 trigger callback on thread the executor provided.
+     * @param callback The callback.
+     */
+    public void process(@Nullable final Handler handler, final ICallback<Map<String, List<Transaction>>> callback) {
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -47,20 +55,28 @@ public class TransactionsProcessor {
                             result.put(transaction.getSku(), transactionList);
                         }
                     }
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onComplete(result);
-                        }
-                    });
+                    if (handler != null) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onComplete(result);
+                            }
+                        });
+                    } else {
+                        callback.onComplete(result);
+                    }
                 } catch (final Exception e) {
                     e.printStackTrace();
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onError(e);
-                        }
-                    });
+                    if (handler != null) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onError(e);
+                            }
+                        });
+                    } else {
+                        callback.onError(e);
+                    }
                 }
             }
         });
