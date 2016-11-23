@@ -1,6 +1,7 @@
 package com.github.khangnt.transactionviewer.model.datasource;
 
 import android.content.ContentResolver;
+import android.content.res.AssetManager;
 import android.net.Uri;
 import android.support.annotation.WorkerThread;
 import android.util.JsonReader;
@@ -22,13 +23,13 @@ import java.util.List;
  * An implementation of {@link IDataSource} to fetch json data in local file
  * and parse it into List of {@link CurrencyRate}.
  */
-public class CurrencyRateFromDisk implements IDataSource<List<CurrencyRate>> {
-    private static final String TAG = "CurrencyRateFromDisk";
+public class CurrencyRateFromAsset implements IDataSource<List<CurrencyRate>> {
+    private static final String TAG = "CurrencyRateFromAsset";
 
-    private Uri sourceUri;
-    private ContentResolver contentResolver;
+    private String path;
+    private AssetManager assetManager;
 
-    public CurrencyRateFromDisk(Uri sourceUri, ContentResolver contentResolver) {
+    public CurrencyRateFromAsset(Uri sourceUri, ContentResolver contentResolver) {
         this.sourceUri = sourceUri;
         this.contentResolver = contentResolver;
     }

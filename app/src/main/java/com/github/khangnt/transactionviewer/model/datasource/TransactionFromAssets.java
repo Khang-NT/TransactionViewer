@@ -1,6 +1,7 @@
 package com.github.khangnt.transactionviewer.model.datasource;
 
 import android.content.ContentResolver;
+import android.content.res.AssetManager;
 import android.net.Uri;
 import android.support.annotation.WorkerThread;
 import android.util.JsonReader;
@@ -9,6 +10,7 @@ import android.util.Log;
 import com.github.khangnt.transactionviewer.model.Transaction;
 import com.github.khangnt.transactionviewer.utils.Preconditions;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -22,24 +24,25 @@ import java.util.List;
  * An implementation of {@link IDataSource} to fetch json data in local file
  * and parse it into List of {@link Transaction}.
  */
-public class TransactionFromDisk implements IDataSource<List<Transaction>> {
-    private static final String TAG = "TransactionFromDisk";
-    private ContentResolver contentResolver;
-    private Uri sourceUri;
+public class TransactionFromAssets implements IDataSource<List<Transaction>> {
+    private static final String TAG = "TransactionFromAssets";
 
-    public TransactionFromDisk(ContentResolver contentResolver, Uri sourceUri) {
-        this.contentResolver = contentResolver;
-        this.sourceUri = sourceUri;
+    private AssetManager assetManager;
+    private String path;
+
+    public TransactionFromAssets(AssetManager assetManager, String path) {
+        this.assetManager = assetManager;
+        this.path = path;
     }
 
-    public void setSourceUri(Uri sourceUri) {
-        this.sourceUri = sourceUri;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     @WorkerThread
     @Override
     public List<Transaction> fetch() throws Exception {
-        InputStream inputStream = Preconditions.checkNotNull(contentResolver.openInputStream(sourceUri));
+        InputStream inputStream = Preconditions.checkNotNull(assetManager.open(path));
         JsonReader jsonReader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
         List<Transaction> result = new ArrayList<>();
         // start parsing list transactions from json
