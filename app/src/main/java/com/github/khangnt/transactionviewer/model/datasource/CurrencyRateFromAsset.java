@@ -20,7 +20,7 @@ import java.util.List;
  * Email: khang.neon.1997@gmail.com
  * <br><br>
  *
- * An implementation of {@link IDataSource} to fetch json data in local file
+ * An implementation of {@link IDataSource} to fetch json data from file asset
  * and parse it into List of {@link CurrencyRate}.
  */
 public class CurrencyRateFromAsset implements IDataSource<List<CurrencyRate>> {
@@ -29,19 +29,19 @@ public class CurrencyRateFromAsset implements IDataSource<List<CurrencyRate>> {
     private String path;
     private AssetManager assetManager;
 
-    public CurrencyRateFromAsset(Uri sourceUri, ContentResolver contentResolver) {
-        this.sourceUri = sourceUri;
-        this.contentResolver = contentResolver;
+    public CurrencyRateFromAsset(String path, AssetManager assetManager) {
+        this.path = path;
+        this.assetManager = assetManager;
     }
 
-    public void setSourceUri(Uri sourceUri) {
-        this.sourceUri = sourceUri;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     @WorkerThread
     @Override
     public List<CurrencyRate> fetch() throws Exception {
-        InputStream inputStream = Preconditions.checkNotNull(contentResolver.openInputStream(sourceUri));
+        InputStream inputStream = Preconditions.checkNotNull(assetManager.open(path));
         JsonReader jsonReader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
         List<CurrencyRate> result = new ArrayList<>();
         // start parsing json

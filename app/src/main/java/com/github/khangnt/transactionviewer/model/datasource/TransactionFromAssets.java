@@ -3,6 +3,7 @@ package com.github.khangnt.transactionviewer.model.datasource;
 import android.content.ContentResolver;
 import android.content.res.AssetManager;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.support.annotation.WorkerThread;
 import android.util.JsonReader;
 import android.util.Log;
@@ -10,6 +11,10 @@ import android.util.Log;
 import com.github.khangnt.transactionviewer.model.Transaction;
 import com.github.khangnt.transactionviewer.utils.Preconditions;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,8 +25,8 @@ import java.util.List;
  * Created by Khang NT on 11/22/16.
  * Email: khang.neon.1997@gmail.com
  * <br><BR>
- *
- * An implementation of {@link IDataSource} to fetch json data in local file
+ * <p>
+ * An implementation of {@link IDataSource} to fetch json data from file asset
  * and parse it into List of {@link Transaction}.
  */
 public class TransactionFromAssets implements IDataSource<List<Transaction>> {
@@ -42,6 +47,7 @@ public class TransactionFromAssets implements IDataSource<List<Transaction>> {
     @WorkerThread
     @Override
     public List<Transaction> fetch() throws Exception {
+        long start = SystemClock.currentThreadTimeMillis();
         InputStream inputStream = Preconditions.checkNotNull(assetManager.open(path));
         JsonReader jsonReader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
         List<Transaction> result = new ArrayList<>();
@@ -65,6 +71,7 @@ public class TransactionFromAssets implements IDataSource<List<Transaction>> {
         jsonReader.endArray();
         jsonReader.close();
         Log.d(TAG, "fetch() returned: " + result);
+        Log.d(TAG, "fetch() finish on " + (SystemClock.currentThreadTimeMillis() - start) + " milliseconds");
         return result;
     }
 }
