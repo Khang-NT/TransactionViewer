@@ -35,7 +35,7 @@ public class TransactionFromAssets implements IDataSource<List<Transaction>> {
     private AssetManager assetManager;
     private String path;
 
-    public TransactionFromAssets(AssetManager assetManager, String path) {
+    public TransactionFromAssets(String path, AssetManager assetManager) {
         this.assetManager = assetManager;
         this.path = path;
     }

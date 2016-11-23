@@ -12,6 +12,7 @@ test:
   post:
     - mkdir -p $CIRCLE_ARTIFACTS/apks/
     - mkdir -p $CIRCLE_ARTIFACTS/mapping/
+    - mkdir -p $CIRCLE_ARTIFACTS/reports/
     - cp app/build/outputs/apk/*.apk $CIRCLE_ARTIFACTS/apks/
     - cp app/build/outputs/mapping/release/*.* $CIRCLE_ARTIFACTS/mapping/
-
+    - cp -R app/build/reports $CIRCLE_ARTIFACTS/reports

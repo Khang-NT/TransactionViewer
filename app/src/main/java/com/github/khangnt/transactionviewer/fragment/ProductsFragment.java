@@ -65,8 +65,8 @@ public class ProductsFragment extends Fragment implements ProductsView {
         loadingState = view.findViewById(R.id.pb_loading);
 
         if (presenter == null) {
-            TransactionFromAssets transactionsDataSource = new TransactionFromAssets(view.getContext().getAssets(),
-                    "transactions.json");
+            TransactionFromAssets transactionsDataSource = new TransactionFromAssets("transactions.json",
+                    view.getContext().getAssets());
             TransactionsProcessor transactionsProcessor = new TransactionsProcessor(
                     Executors.newSingleThreadExecutor(), transactionsDataSource);
             presenter = new ProductsPresenter(transactionsProcessor, new Handler(), this);

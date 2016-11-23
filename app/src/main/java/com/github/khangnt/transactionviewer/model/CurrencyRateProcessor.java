@@ -19,7 +19,7 @@ import java.util.concurrent.Executor;
 /**
  * A valid rate data set should have a way to convert from a currency to any currency,
  * it also means we can convert between all currencies in the data set. <br><br>
- * <p>
+ * <br>
  * This class perform algorithm to calculate the rate of all currency with GBP.
  * <br> It requires <b>currency rate</b> data source ({@link IDataSource}), and an {@link Executor} to run on.
  * <br> It maybe take a while to finish, so it should be executed independent with main thread.
@@ -41,7 +41,7 @@ public class CurrencyRateProcessor {
     }
 
     /**
-     * Run on given {@link Executor} to calculate the rate of all currency with GBP.
+     * Run on given {@link Executor} to calculate the rate of <b>all currency with GBP</b>.
      *
      * @param handler  is used to trigger the callback.
      * @param callback The callback.
@@ -51,11 +51,14 @@ public class CurrencyRateProcessor {
             @Override
             public void run() {
                 try {
+                    // use doubly linked list for best performance to remove random item
                     final LinkedList<CurrencyRate> rateDataSet = new LinkedList<>(currenciesDataSource.fetch());
                     final Map<String, Float> currencyRateWithGBP = new HashMap<>();
                     // GBP / GBP == 1
                     currencyRateWithGBP.put(GBP, 1f);
-                    // With the worst situation, it runs loop up to N^2 times.
+                    // N = number of currency type
+                    // With the worst situation (GBP -> a, a -> b, b -> c, c -> d)
+                    // it runs loop up to N^2 / 2 times.
                     // But rateDataSet is small, so O(N^2) can be acceptable.
                     // TODO: 11/23/16 Khang-NT: improve algorithm
                     while (rateDataSet.size() > 0) {
