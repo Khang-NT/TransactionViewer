@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">TransactionViewer</string>
+    <string name="sku_list_empty_state_message">No transaction available.</string>
+    <string name="load_currency_rate_error_message">Encountered an error while loading currency rate.</string>
+    <string name="retry">Retry</string>
+    <string name="total_amount_format" formatted="false">Total: %c%s</string>
+    <string name="currency_format" formatted="false">%c%s</string>
+    <string name="products_activity_label">Products</string>
+    <string name="transactions_for" formatted="false">Transactions for %s</string>
 </resources>

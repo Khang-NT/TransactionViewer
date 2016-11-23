@@ -18,3 +18,7 @@
 # Optimizations
 -optimizationpasses 5
 -dontpreverify
+# Don't break support libraries
+-keep class android.support.design.widget.** { *; }
+-keep interface android.support.design.widget.** { *; }
+-dontwarn android.support.design.**
