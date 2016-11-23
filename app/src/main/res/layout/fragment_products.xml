@@ -9,7 +9,8 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_sku_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        tools:listitem="@layout/sku_list_item"/>
 
     <TextView
         android:id="@+id/tv_empty_state"
@@ -18,7 +19,7 @@
         android:layout_gravity="center"
         android:textColor="?android:textColorSecondary"
         android:textSize="20sp"
-        android:text="No transaction available."
+        android:text="@string/sku_list_empty_state_message"
         tools:visibility="visible"
         android:visibility="gone"/>
 
