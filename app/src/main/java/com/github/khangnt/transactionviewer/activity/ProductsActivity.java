@@ -1,8 +1,6 @@
 package com.github.khangnt.transactionviewer.activity;
 
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
 import com.github.khangnt.transactionviewer.R;
@@ -17,6 +15,7 @@ public class ProductsActivity extends AppCompatActivity {
     public static final String PRODUCT_TRANS_FRAGMENT = "product_trans_fragment";
     public static final String TRANS_DETAIL_FRAGMENT = "trans_detail_fragment";
     public static final String TITLE = "title";
+
     ProductsFragment productsFragment;
     TransactionDetailsFragment transDetailFragment;
 
@@ -41,7 +40,6 @@ public class ProductsActivity extends AppCompatActivity {
                     .commit();
         }
     }
-
 
 
     public void showTransactionDetail(String sku, List<Transaction> transactions) {

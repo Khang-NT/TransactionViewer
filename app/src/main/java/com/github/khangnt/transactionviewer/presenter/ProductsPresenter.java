@@ -16,7 +16,7 @@ import java.util.Map;
  * Created by Khang NT on 11/22/16.
  * Email: khang.neon.1997@gmail.com
  */
-public class ProductsPresenter implements ProductsView.Presenter, ICallback<Map<String,List<Transaction>>> {
+public class ProductsPresenter implements ProductsView.Presenter, ICallback<Map<String, List<Transaction>>> {
 
     private enum State {
         IDLE,

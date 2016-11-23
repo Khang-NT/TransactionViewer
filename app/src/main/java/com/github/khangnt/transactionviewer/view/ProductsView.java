@@ -11,14 +11,20 @@ import java.util.Map;
  */
 public interface ProductsView {
     void displayLoadingState();
+
     void displayErrorState(String error);
+
     void displayMessage(String message);
+
     void display(List<String> skuList, Map<String, List<Transaction>> transactionDetails);
 
     interface Presenter {
         void setView(ProductsView view);    //
+
         void onViewReady();                 // trigger when view ready to retrieve data
+
         void onRetry();                     // retry on Error
+
         void cleanUp();
     }
 }

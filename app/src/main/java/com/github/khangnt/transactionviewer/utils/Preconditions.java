@@ -5,11 +5,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import static android.R.id.message;
-
 public final class Preconditions {
 
-    private Preconditions() {}
+    private Preconditions() {
+    }
 
     @NonNull
     public static <T> T checkNotNull(T value) {

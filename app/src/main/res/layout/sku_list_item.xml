@@ -7,6 +7,7 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:background="?selectableItemBackground">
+
     <TextView
         android:id="@+id/tv_sku"
         android:layout_width="match_parent"

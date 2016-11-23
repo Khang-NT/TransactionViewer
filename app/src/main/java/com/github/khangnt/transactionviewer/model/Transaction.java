@@ -11,7 +11,8 @@ public class Transaction {
     private String sku;
     private float amount;
 
-    private Transaction() {}
+    private Transaction() {
+    }
 
     public String getCurrency() {
         return currency;

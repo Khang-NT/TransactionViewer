@@ -1,8 +1,6 @@
 package com.github.khangnt.transactionviewer.model.datasource;
 
-import android.content.ContentResolver;
 import android.content.res.AssetManager;
-import android.net.Uri;
 import android.os.SystemClock;
 import android.support.annotation.WorkerThread;
 import android.util.JsonReader;
@@ -11,11 +9,6 @@ import android.util.Log;
 import com.github.khangnt.transactionviewer.model.Transaction;
 import com.github.khangnt.transactionviewer.utils.Preconditions;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
