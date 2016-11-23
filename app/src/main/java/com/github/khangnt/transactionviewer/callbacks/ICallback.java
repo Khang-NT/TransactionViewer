@@ -6,5 +6,6 @@ package com.github.khangnt.transactionviewer.callbacks;
  */
 public interface ICallback<T> {
     void onComplete(T data);
+
     void onError(Exception ex);
 }

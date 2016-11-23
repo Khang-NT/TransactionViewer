@@ -18,6 +18,7 @@ android {
             zipAlignEnabled true
         }
     }
+
 }
 
 dependencies {
@@ -28,5 +29,18 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.0.1'
     compile 'com.android.support:recyclerview-v7:25.0.1'
     compile 'com.android.support:design:25.0.1'
+
     testCompile 'junit:junit:4.12'
+    testCompile "org.robolectric:robolectric:3.1.4"
+    testCompile "org.mockito:mockito-core:1.10.19"
+    testCompile('com.squareup.assertj:assertj-android:1.1.1') {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+}
+
+// quick fix robolectric problem with gradle 2.2.x, asset not found
+android.applicationVariants.all { variant ->
+    def productFlavor = variant.productFlavors[0] != null ? "${variant.productFlavors[0].name.capitalize()}" : ""
+    def buildType = "${variant.buildType.name.capitalize()}"
+    tasks["compile${productFlavor}${buildType}UnitTestSources"].dependsOn(tasks["merge${productFlavor}${buildType}Assets"])
 }

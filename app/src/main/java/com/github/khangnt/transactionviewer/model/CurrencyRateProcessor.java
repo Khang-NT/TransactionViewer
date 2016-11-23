@@ -1,6 +1,7 @@
 package com.github.khangnt.transactionviewer.model;
 
 import android.os.Handler;
+import android.support.annotation.Nullable;
 
 import com.github.khangnt.transactionviewer.callbacks.ICallback;
 import com.github.khangnt.transactionviewer.model.datasource.IDataSource;
@@ -19,7 +20,7 @@ import java.util.concurrent.Executor;
 /**
  * A valid rate data set should have a way to convert from a currency to any currency,
  * it also means we can convert between all currencies in the data set. <br><br>
- * <p>
+ * <br>
  * This class perform algorithm to calculate the rate of all currency with GBP.
  * <br> It requires <b>currency rate</b> data source ({@link IDataSource}), and an {@link Executor} to run on.
  * <br> It maybe take a while to finish, so it should be executed independent with main thread.
@@ -41,21 +42,25 @@ public class CurrencyRateProcessor {
     }
 
     /**
-     * Run on given {@link Executor} to calculate the rate of all currency with GBP.
+     * Run on given {@link Executor} to calculate the rate of <b>all currency with GBP</b>.
      *
-     * @param handler  is used to trigger the callback.
+     * @param handler  The handler use to dispatch the callback data, nullable. If null,
+     *                 trigger callback on thread the executor provided.
      * @param callback The callback.
      */
-    public void process(final Handler handler, final ICallback<Map<String, Float>> callback) {
+    public void process(@Nullable final Handler handler, final ICallback<Map<String, Float>> callback) {
         executor.execute(new Runnable() {
             @Override
             public void run() {
                 try {
+                    // use doubly linked list for best performance to remove random item
                     final LinkedList<CurrencyRate> rateDataSet = new LinkedList<>(currenciesDataSource.fetch());
                     final Map<String, Float> currencyRateWithGBP = new HashMap<>();
                     // GBP / GBP == 1
                     currencyRateWithGBP.put(GBP, 1f);
-                    // With the worst situation, it runs loop up to N^2 times.
+                    // N = number of currency type
+                    // With the worst situation (GBP -> a, a -> b, b -> c, c -> d)
+                    // it runs loop up to N^2 / 2 times.
                     // But rateDataSet is small, so O(N^2) can be acceptable.
                     // TODO: 11/23/16 Khang-NT: improve algorithm
                     while (rateDataSet.size() > 0) {
@@ -64,12 +69,12 @@ public class CurrencyRateProcessor {
                             CurrencyRate currencyRate = rateDataSet.get(i);
                             if (currencyRateWithGBP.containsKey(currencyRate.getFrom())) {
                                 currencyRateWithGBP.put(currencyRate.getTo(),
-                                        currencyRateWithGBP.get(currencyRate.getFrom()) / currencyRate.getRate());
+                                        currencyRateWithGBP.get(currencyRate.getFrom()) * currencyRate.getRate());
                                 rateDataSet.remove(i);
                                 flag = true;
                             } else if (currencyRateWithGBP.containsKey(currencyRate.getTo())) {
                                 currencyRateWithGBP.put(currencyRate.getFrom(),
-                                        currencyRateWithGBP.get(currencyRate.getTo()) * currencyRate.getRate());
+                                        currencyRateWithGBP.get(currencyRate.getTo()) / currencyRate.getRate());
                                 rateDataSet.remove(i);
                                 flag = true;
                             } else {
@@ -80,20 +85,28 @@ public class CurrencyRateProcessor {
                             throw new Exception("Invalid rate data set: can't not calculate the rate of "
                                     + rateDataSet.get(0).getFrom() + " with " + GBP);
                     }
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onComplete(currencyRateWithGBP);
-                        }
-                    });
+                    if (handler != null) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onComplete(currencyRateWithGBP);
+                            }
+                        });
+                    } else {
+                        callback.onComplete(currencyRateWithGBP);
+                    }
                 } catch (final Exception e) {
                     e.printStackTrace();
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onError(e);
-                        }
-                    });
+                    if (handler != null) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onError(e);
+                            }
+                        });
+                    } else {
+                        callback.onError(e);
+                    }
                 }
             }
         });

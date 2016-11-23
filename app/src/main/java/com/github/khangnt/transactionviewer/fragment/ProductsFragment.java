@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
-import static android.R.id.message;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -65,8 +64,8 @@ public class ProductsFragment extends Fragment implements ProductsView {
         loadingState = view.findViewById(R.id.pb_loading);
 
         if (presenter == null) {
-            TransactionFromAssets transactionsDataSource = new TransactionFromAssets(view.getContext().getAssets(),
-                    "transactions.json");
+            TransactionFromAssets transactionsDataSource = new TransactionFromAssets("transactions.json",
+                    view.getContext().getAssets());
             TransactionsProcessor transactionsProcessor = new TransactionsProcessor(
                     Executors.newSingleThreadExecutor(), transactionsDataSource);
             presenter = new ProductsPresenter(transactionsProcessor, new Handler(), this);
@@ -147,7 +146,7 @@ public class ProductsFragment extends Fragment implements ProductsView {
 
         public void bind(String sku, int transCount) {
             tvSku.setText(this.sku = sku);
-            tvTransCount.setText(String.valueOf(transCount));
+            tvTransCount.setText(getResources().getQuantityString(R.plurals.trans_count, transCount, transCount));
         }
 
         @Override
