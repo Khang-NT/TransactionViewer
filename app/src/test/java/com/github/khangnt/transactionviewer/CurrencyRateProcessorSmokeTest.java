@@ -76,9 +76,9 @@ public class CurrencyRateProcessorSmokeTest {
         currencyRateProcessor.process(null, callback);
         verify(callback).onComplete(rateWithGbpCaptor.capture());
         // GBP / A = 1
-        // A / E = 2
+        // E / A = 2
         // E / GBP = 0.5
-        assertThat(rateWithGbpCaptor.getValue().get("E")).isEqualTo(0.5f);
+        assertThat(rateWithGbpCaptor.getValue().get("E")).isEqualTo(2f);
     }
 
     @Test
