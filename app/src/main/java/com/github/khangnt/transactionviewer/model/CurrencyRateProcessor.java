@@ -69,12 +69,12 @@ public class CurrencyRateProcessor {
                             CurrencyRate currencyRate = rateDataSet.get(i);
                             if (currencyRateWithGBP.containsKey(currencyRate.getFrom())) {
                                 currencyRateWithGBP.put(currencyRate.getTo(),
-                                        currencyRateWithGBP.get(currencyRate.getFrom()) / currencyRate.getRate());
+                                        currencyRateWithGBP.get(currencyRate.getFrom()) * currencyRate.getRate());
                                 rateDataSet.remove(i);
                                 flag = true;
                             } else if (currencyRateWithGBP.containsKey(currencyRate.getTo())) {
                                 currencyRateWithGBP.put(currencyRate.getFrom(),
-                                        currencyRateWithGBP.get(currencyRate.getTo()) * currencyRate.getRate());
+                                        currencyRateWithGBP.get(currencyRate.getTo()) / currencyRate.getRate());
                                 rateDataSet.remove(i);
                                 flag = true;
                             } else {
