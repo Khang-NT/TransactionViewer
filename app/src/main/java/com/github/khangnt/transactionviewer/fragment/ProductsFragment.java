@@ -146,7 +146,7 @@ public class ProductsFragment extends Fragment implements ProductsView {
 
         public void bind(String sku, int transCount) {
             tvSku.setText(this.sku = sku);
-            tvTransCount.setText(String.valueOf(transCount));
+            tvTransCount.setText(getResources().getQuantityString(R.plurals.trans_count, transCount, transCount));
         }
 
         @Override
