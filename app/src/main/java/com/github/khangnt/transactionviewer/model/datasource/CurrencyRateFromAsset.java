@@ -54,7 +54,7 @@ public class CurrencyRateFromAsset implements IDataSource<List<CurrencyRate>> {
                 if ("from".equals(name))
                     builder.from(jsonReader.nextString());
                 else if ("to".equals(name))
-                    builder.to(jsonReader.nextName());
+                    builder.to(jsonReader.nextString());
                 else if ("rate".equals(name))
                     builder.rate((float) jsonReader.nextDouble());
             }
