@@ -90,16 +90,18 @@ public class TransactionDetailsFragment extends Fragment implements ICallback<Ma
     }
 
     private void onDataChanged() {
-        if (recyclerView != null && recyclerView.getAdapter() != null) {
-            recyclerView.getAdapter().notifyDataSetChanged();
-        }
-        if (rateWithGbp != null && transactions != null && total != null) {
-            float totalAmount = 0;
-            for (Transaction trans : transactions) {
-                totalAmount += trans.getAmount() / rateWithGbp.get(trans.getCurrency());
+        if (isAdded()) {
+            if (recyclerView != null && recyclerView.getAdapter() != null) {
+                recyclerView.getAdapter().notifyDataSetChanged();
             }
-            total.setText(getString(R.string.total_amount_format,
-                    sCurrencySymbol.get("GBP"), decimalFormat.format(totalAmount)));
+            if (rateWithGbp != null && transactions != null && total != null) {
+                float totalAmount = 0;
+                for (Transaction trans : transactions) {
+                    totalAmount += trans.getAmount() / rateWithGbp.get(trans.getCurrency());
+                }
+                total.setText(getString(R.string.total_amount_format,
+                        sCurrencySymbol.get("GBP"), decimalFormat.format(totalAmount)));
+            }
         }
     }
 
@@ -124,7 +126,7 @@ public class TransactionDetailsFragment extends Fragment implements ICallback<Ma
 
     private void promptRetryLoadCurrencyRate() {
         final View view = getView();
-        if (view != null) {
+        if (view != null && isAdded()) {
             Snackbar.make(view, R.string.load_currency_rate_error_message, Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.retry, new View.OnClickListener() {
                         @Override

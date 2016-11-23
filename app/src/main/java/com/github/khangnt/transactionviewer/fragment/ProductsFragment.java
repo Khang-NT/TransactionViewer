@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
+import static android.R.id.message;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -76,27 +77,31 @@ public class ProductsFragment extends Fragment implements ProductsView {
 
     @Override
     public void displayLoadingState() {
-        if (loadingState != null)
-            loadingState.setVisibility(VISIBLE);
-        if (emptyState != null)
-            emptyState.setVisibility(GONE);
+        if (isAdded()) {
+            if (loadingState != null)
+                loadingState.setVisibility(VISIBLE);
+            if (emptyState != null)
+                emptyState.setVisibility(GONE);
+        }
     }
 
     @Override
     public void displayErrorState(String error) {
-        final View view = getView();
-        if (view != null) {
-            Snackbar.make(view, error, Snackbar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    presenter.onRetry();
-                }
-            }).show();
+        if (isAdded()) {
+            final View view = getView();
+            if (view != null) {
+                Snackbar.make(view, error, Snackbar.LENGTH_INDEFINITE).setAction(R.string.retry, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        presenter.onRetry();
+                    }
+                }).show();
+            }
+            if (loadingState != null)
+                loadingState.setVisibility(GONE);
+            if (emptyState != null)
+                emptyState.setVisibility(GONE);
         }
-        if (loadingState != null)
-            loadingState.setVisibility(GONE);
-        if (emptyState != null)
-            emptyState.setVisibility(GONE);
     }
 
     @Override
@@ -109,16 +114,17 @@ public class ProductsFragment extends Fragment implements ProductsView {
     public void display(List<String> skuList, Map<String, List<Transaction>> transactionDetails) {
         this.skuList = skuList;
         this.productTransactionDetails = transactionDetails;
+        if (isAdded()) {
+            if (recyclerView != null && recyclerView.getAdapter() != null) {
+                recyclerView.getAdapter().notifyDataSetChanged();
+            }
 
-        if (recyclerView != null && recyclerView.getAdapter() != null) {
-            recyclerView.getAdapter().notifyDataSetChanged();
+            if (emptyState != null)
+                emptyState.setVisibility(skuList.size() == 0 ? VISIBLE : GONE);
+
+            if (loadingState != null)
+                loadingState.setVisibility(GONE);
         }
-
-        if (emptyState != null)
-            emptyState.setVisibility(skuList.size() == 0 ? VISIBLE : GONE);
-
-        if (loadingState != null)
-            loadingState.setVisibility(GONE);
     }
 
     private void displayTransactionDetail(String sku) {
