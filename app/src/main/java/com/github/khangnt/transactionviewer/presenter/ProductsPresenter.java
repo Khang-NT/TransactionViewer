@@ -9,6 +9,8 @@ import com.github.khangnt.transactionviewer.view.ProductsView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +60,7 @@ public class ProductsPresenter implements ProductsView.Presenter, ICallback<Map<
         if (currentState == State.ERROR) {
             callProcessor();
         } /* else
-            throw exception
+            throw invalid state
         */
     }
 
@@ -90,6 +92,12 @@ public class ProductsPresenter implements ProductsView.Presenter, ICallback<Map<
     public void onComplete(Map<String, List<Transaction>> data) {
         this.currentState = State.LOADED;
         this.skuList = new ArrayList<>(data.keySet());
+        Collections.sort(skuList, new Comparator<String>() {
+            @Override
+            public int compare(String s, String t1) {
+                return s.compareTo(t1);
+            }
+        });
         this.transactionDetails = data;
         this.displayCurrentStateIfNeeded();
     }

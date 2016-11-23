@@ -5,6 +5,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+/**
+ * Credit: Guava
+ */
 public final class Preconditions {
 
     private Preconditions() {

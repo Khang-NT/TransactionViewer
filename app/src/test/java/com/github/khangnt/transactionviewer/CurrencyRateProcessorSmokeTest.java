@@ -21,8 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Matchers.anyList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.times;
