@@ -19,9 +19,9 @@ import java.util.concurrent.Executor;
 
 /**
  * A valid rate data set should have a way to convert from a currency to any currency,
- * it also means we can convert between all currencies in the data set. <br><br>
+ * it also means we can convert between all currencies in the data set. <br>
  * <br>
- * This class perform algorithm to calculate the rate of all currency with GBP.
+ * This class perform algorithm to calculate the rate of <b>all currency with GBP</b>.
  * <br> It requires <b>currency rate</b> data source ({@link IDataSource}), and an {@link Executor} to run on.
  * <br> It maybe take a while to finish, so it should be executed independent with main thread.
  */
@@ -42,9 +42,9 @@ public class CurrencyRateProcessor {
     }
 
     /**
-     * Run on given {@link Executor} to calculate the rate of <b>all currency with GBP</b>.
+     * Run on given {@link Executor} to calculate the <font color="yellow"><b>rate of all currency with GBP</b></font>.
      *
-     * @param handler  The handler use to dispatch the callback data, nullable. If null,
+     * @param handler  Nullable, the handler use to dispatch the callback data. If null,
      *                 trigger callback on thread the executor provided.
      * @param callback The callback.
      */
@@ -55,26 +55,27 @@ public class CurrencyRateProcessor {
                 try {
                     // use doubly linked list for best performance to remove random item
                     final LinkedList<CurrencyRate> rateDataSet = new LinkedList<>(currenciesDataSource.fetch());
-                    final Map<String, Float> currencyRateWithGBP = new HashMap<>();
+                    final Map<String, Float> rateWithGbp = new HashMap<>();
                     // GBP / GBP == 1
-                    currencyRateWithGBP.put(GBP, 1f);
-                    // N = number of currency type
-                    // With the worst situation (GBP -> a, a -> b, b -> c, c -> d)
-                    // it runs loop up to N^2 / 2 times.
-                    // But rateDataSet is small, so O(N^2) can be acceptable.
+                    rateWithGbp.put(GBP, 1f);
+                    // consider N = number of currency type, no matter how many item in rateDataSet
+                    // With the worst situation (d -> c, c -> b, b -> a, GBP -> a)
+                    // it runs loop up to (N^2 + N) / 2 times.
+                    // But N seems too small, so O(N^2) can be acceptable.
                     // TODO: 11/23/16 Khang-NT: improve algorithm
                     while (rateDataSet.size() > 0) {
                         boolean flag = false;
                         for (int i = 0; i < rateDataSet.size(); ) {
                             CurrencyRate currencyRate = rateDataSet.get(i);
-                            if (currencyRateWithGBP.containsKey(currencyRate.getFrom())) {
-                                currencyRateWithGBP.put(currencyRate.getTo(),
-                                        currencyRateWithGBP.get(currencyRate.getFrom()) * currencyRate.getRate());
+                            if (rateWithGbp.containsKey(currencyRate.getFrom())) {
+                                if (!rateWithGbp.containsKey(currencyRate.getTo()))     // avoid duplicate evaluating
+                                    rateWithGbp.put(currencyRate.getTo(),
+                                            rateWithGbp.get(currencyRate.getFrom()) * currencyRate.getRate());
                                 rateDataSet.remove(i);
                                 flag = true;
-                            } else if (currencyRateWithGBP.containsKey(currencyRate.getTo())) {
-                                currencyRateWithGBP.put(currencyRate.getFrom(),
-                                        currencyRateWithGBP.get(currencyRate.getTo()) / currencyRate.getRate());
+                            } else if (rateWithGbp.containsKey(currencyRate.getTo())) {
+                                rateWithGbp.put(currencyRate.getFrom(),
+                                        rateWithGbp.get(currencyRate.getTo()) / currencyRate.getRate());
                                 rateDataSet.remove(i);
                                 flag = true;
                             } else {
@@ -89,11 +90,11 @@ public class CurrencyRateProcessor {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                callback.onComplete(currencyRateWithGBP);
+                                callback.onComplete(rateWithGbp);
                             }
                         });
                     } else {
-                        callback.onComplete(currencyRateWithGBP);
+                        callback.onComplete(rateWithGbp);
                     }
                 } catch (final Exception e) {
                     e.printStackTrace();
