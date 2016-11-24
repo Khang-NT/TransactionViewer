@@ -77,7 +77,8 @@ public class TransactionDetailsFragment extends Fragment implements ICallback<Ma
         total = (TextView) view.findViewById(R.id.tv_total);
 
         if (currencyRateProcessor == null) {
-            IDataSource<List<CurrencyRate>> currencyDataSource = new CurrencyRateFromAsset("rates.json", view.getContext().getAssets());
+            IDataSource<List<CurrencyRate>> currencyDataSource =
+                    new CurrencyRateFromAsset("rates.json", view.getContext().getAssets());
             currencyRateProcessor = new CurrencyRateProcessor(currencyDataSource, Executors.newSingleThreadExecutor());
             handler = new Handler();
             currencyRateProcessor.process(handler, this);
